@@ -1,0 +1,80 @@
+# 运行记录（Run Log）
+
+日期：2026-11-13（北京时间）。所有命令在项目根目录执行，venv 为 `./.venv`。
+
+## 1. 环境与数据
+
+```bash
+python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt
+./.venv/bin/python scripts/prepare_ocr_data.py
+./.venv/bin/python scripts/prepare_asr_data.py
+./.venv/bin/python scripts/verify_data.py      # 数据完整性校验，全部通过
+```
+
+| 数据 | 结果 | 耗时 |
+|---|---|---|
+| BDRC OCR 基准 | 472 页，导出 PNG + GT；官方 scorer 已下载 | ~10s（下载 121MB） |
+| NICT-Tib1 test | 1,547 条 / 185.5 分钟；3 说话人（074:800, 019:400, 070:347）；抽样 300 条 | ~40s（下载 335MB + 解码） |
+| OpenPecha 基准 | 8 领域 × 20 = 160 条 / 8.9 分钟 | ~30s |
+
+## 2. OCR
+
+| run_id | 引擎 | 页数 | mean CER | median CER | 灾难页 | 备注 |
+|---|---|---:|---:|---:|---:|---|
+| `yigdzin_pilot_20261112_210826` | Yigdzin | 3 | 4.41% | 1.50% | 0% | 13.7s/页（含加载 41s 总计） |
+| `tesseract_pilot_20261112_204458` | Tesseract | 3 | 81.85% | 78.30% | 100% | 0.5s/页 |
+| `yigdzin_sample_20261112_210922` | Yigdzin | 60 | **2.50%** | **1.01%** | 0% | 2184s；36.4s/页（后段与 ASR 并发，中位 33.3s） |
+| `tesseract_sample_20261112_210924` | Tesseract | 60 | 53.52% | 56.06% | 53.3% | 198s；3.3s/页 |
+
+命令：
+
+```bash
+./.venv/bin/python scripts/run_ocr.py --engine yigdzin --split pilot --limit 3 --use-dry
+./.venv/bin/python scripts/run_ocr.py --engine tesseract --split pilot --limit 3
+./.venv/bin/python scripts/run_ocr.py --engine yigdzin --split sample --use-dry
+./.venv/bin/python scripts/run_ocr.py --engine tesseract --split sample
+./.venv/bin/python scripts/score_ocr.py
+```
+
+关键调试记录：
+
+- 初次运行 Yigdzin 单页 >5 分钟未出结果 → 定位为 `generation_config.use_cache=false`；显式 `use_cache=True` 后 120 token 从 83.4s 降到 7.5s，且输出逐字节一致。
+- 模型卡要求 `mm_token_type_ids` 清零，已实现。
+- DRY 抗重复（mult=0.8/base=1.75/allowed_length=12）全程开启，未出现循环。
+
+## 3. ASR
+
+| run_id | 模型 | 数据集 | n | CER | SWER | RTF |
+|---|---|---|---:|---:|---:|---:|
+| `wav2vec2-base_nict_20261112_212254` | wav2vec2-base | NICT 全量 | 1547 | 7.90% | 29.81% | 0.023 |
+| `openpecha-general_nict_20261112_212842` | openpecha-general | NICT 全量 | 1547 | 8.28% | 30.19% | 0.049 |
+| `whisper-tiny_nict_20261112_214708` | whisper-tiny | NICT 300 | 300 | 11.57% | 27.84% | 0.251 |
+| `whisper-base_nict_20261112_215613` | whisper-base | NICT 300 | 300 | 10.22% | 23.78% | 0.392 |
+| `whisper-small_nict_20261112_221057` | whisper-small | NICT 300 | 300 | 8.31% | 18.43% | 0.653 |
+| `tenzin-small_nict_20261112_223457` | tenzin-small | NICT 300 | 300 | 8.32% | 17.85% | 0.472 |
+| `wav2vec2-base_openpecha_20261112_221718` | wav2vec2-base | OpenPecha | 160 | 54.02% | 93.12% | 0.027 |
+| `openpecha-general_openpecha_20261112_221753` | openpecha-general | OpenPecha | 160 | 15.46% | 38.27% | 0.060 |
+| `whisper-small_openpecha_20261112_225427` | whisper-small | OpenPecha | 160 | 56.21% | 89.60% | 0.482 |
+| `tenzin-small_openpecha_20261112_225857` | tenzin-small | OpenPecha | 160 | 24.86% | 46.85% | 0.432 |
+
+命令（与 `scripts/run_all_asr.sh` 一致）：
+
+```bash
+./scripts/run_all_asr.sh
+./.venv/bin/python scripts/summarize_asr.py --dataset both
+```
+
+关键调试记录：
+
+1. `billingsmoore/*-whisper-*` 仓库只含 `config.json + model.safetensors`，没有 tokenizer/preprocessor → 用 `openai/whisper-{tiny,base,small}` 的 processor 重建。
+2. transformers 5.22 的 Whisper 长格式生成（仅给 `max_length`）会触发 `EncoderDecoderCache has no attribute layers` → 显式传 `max_new_tokens` 走短格式。
+3. `max_new_tokens` 在该版本被当作总长度处理（`seq.shape == max_new_tokens`），因此取 440（上限 448）。
+4. 藏文 byte-level token ≈ 3 token/字符 → Whisper 单次最多 ~145 字符；长句截断导致 CER 虚高，故同时报告 ≤150 字子集。
+5. 初次 10 条 pilot 的 CER 47% 是长句偏置造成的假象，扩大到 300 条分层样本后为 11.6%。
+
+## 4. 汇总产物
+
+- `reports/ocr_results.csv`、`reports/ocr_per_page.csv`
+- `reports/asr_results.csv`、`reports/asr_final_{nict,openpecha,both}.csv`
+- `reports/samples/ocr_samples.md`、`reports/samples/asr_samples.md`（含图片/音频）
+- `reports/environment.txt`

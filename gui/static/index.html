@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>藏语 OCR / ASR 本地评测台</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="mark">བོད</span>
+    <h1>藏语 OCR / ASR 本地评测台</h1>
+    <span class="sub">Tibetan OCR &amp; ASR evaluation console</span>
+  </div>
+  <div class="meta">
+    <span id="health" class="mono muted">连接中…</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="ocr">OCR 评测</button>
+  <button class="tab" data-tab="asr">ASR 评测</button>
+  <button class="tab" data-tab="batch">批量抽检</button>
+  <button class="tab" data-tab="about">说明 / 指标</button>
+</nav>
+
+<!-- ============================ OCR ============================ -->
+<main id="tab-ocr" class="tabpane active">
+  <section class="col source">
+    <h2>数据源</h2>
+    <div class="segmented">
+      <button class="seg active" data-src="sample">样例（有标准答案）</button>
+      <button class="seg" data-src="upload">上传新图片</button>
+    </div>
+
+    <div id="ocr-sample-pane">
+      <label>材料 technology
+        <select id="ocr-tech">
+          <option value="">全部</option>
+          <option>manuscripts</option><option>blockprints</option>
+          <option>digital_fonts</option><option>modern</option>
+          <option>metal_types</option><option>typewriters</option>
+        </select>
+      </label>
+      <label>文字 script
+        <select id="ocr-script">
+          <option value="">全部</option>
+          <option>Uchen</option><option>Ume</option><option>Transitional</option>
+        </select>
+      </label>
+      <label>清晰度 legibility
+        <select id="ocr-leg">
+          <option value="">全部</option>
+          <option value="4">4 - Excellent</option><option value="3">3 - Good</option>
+          <option value="2">2 - Fair</option><option value="1">1 - Poor</option>
+        </select>
+      </label>
+      <div class="listmeta mono muted" id="ocr-count">—</div>
+      <ul id="ocr-list" class="samplelist"></ul>
+    </div>
+
+    <div id="ocr-upload-pane" hidden>
+      <label class="file">选择图片（png / jpg / tif，≤40MB）
+        <input type="file" id="ocr-file" accept="image/*">
+      </label>
+      <label>标准答案（可选，粘贴后即可算指标）
+        <textarea id="ocr-ref-input" rows="6" placeholder="粘贴人工转写文本…"></textarea>
+      </label>
+      <button id="ocr-upload-run" class="primary">识别上传图片</button>
+    </div>
+  </section>
+
+  <section class="col viewer">
+    <h2>原图 <span class="mono muted" id="ocr-dims"></span></h2>
+    <div class="imgwrap"><img id="ocr-img" alt="page"></div>
+    <table class="kv mono" id="ocr-meta"></table>
+  </section>
+
+  <section class="col result">
+    <h2>识别结果</h2>
+    <div class="row">
+      <label>引擎
+        <select id="ocr-engine">
+          <option value="yigdzin">BDRC Yigdzin（0.8B）</option>
+          <option value="tesseract">Tesseract + bod</option>
+        </select>
+      </label>
+      <button id="ocr-run" class="primary">运行识别</button>
+    </div>
+    <div id="ocr-status" class="status mono muted"></div>
+
+    <div class="metrics" id="ocr-metrics"></div>
+
+    <div class="diffhead">
+      <span class="legend">
+        <i class="lg lg-ok"></i>正确
+        <i class="lg lg-rep"></i>替换
+        <i class="lg lg-del"></i>漏识别
+        <i class="lg lg-ins"></i>多识别
+      </span>
+      <span class="viewtoggle mono">
+        <button class="mini active" data-ocrview="inline">行内</button>
+        <button class="mini" data-ocrview="side">并排</button>
+      </span>
+    </div>
+    <div class="diff" id="ocr-diff"></div>
+    <div class="counts mono" id="ocr-counts"></div>
+  </section>
+</main>
+
+<!-- ============================ ASR ============================ -->
+<main id="tab-asr" class="tabpane">
+  <section class="col source">
+    <h2>数据源</h2>
+    <div class="segmented">
+      <button class="seg active" data-asrsrc="sample">样例（有标准答案）</button>
+      <button class="seg" data-asrsrc="upload">上传音频 / 视频</button>
+    </div>
+
+    <div id="asr-sample-pane">
+      <label>数据集
+        <select id="asr-dataset">
+          <option value="nict">NICT-Tib1（拉萨朗读新闻）</option>
+          <option value="openpecha">OpenPecha（8 领域）</option>
+        </select>
+      </label>
+      <label>领域 dept
+        <select id="asr-dept"><option value="">全部</option></select>
+      </label>
+      <div class="listmeta mono muted" id="asr-count">—</div>
+      <ul id="asr-list" class="samplelist"></ul>
+    </div>
+
+    <div id="asr-upload-pane" hidden>
+      <label class="file">选择音频/视频（wav / mp3 / m4a / mp4，≤40MB）
+        <input type="file" id="asr-file" accept="audio/*,video/*">
+      </label>
+      <label>标准答案（可选）
+        <textarea id="asr-ref-input" rows="5" placeholder="粘贴人工转写文本…"></textarea>
+      </label>
+      <button id="asr-upload-run" class="primary">转写上传文件</button>
+    </div>
+  </section>
+
+  <section class="col viewer">
+    <h2>音频 <span class="mono muted" id="asr-dur"></span></h2>
+    <audio id="asr-audio" controls preload="metadata"></audio>
+    <table class="kv mono" id="asr-meta"></table>
+    <h2 class="mt">分段</h2>
+    <table class="segtable mono" id="asr-segments">
+      <thead><tr><th>#</th><th>start</th><th>end</th><th>字符</th><th>文本</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="col result">
+    <h2>转写结果</h2>
+    <div class="row">
+      <label>模型
+        <select id="asr-model">
+          <option value="whisper-small">whisper-small（词级最好）</option>
+          <option value="wav2vec2-base">wav2vec2-base（最快）</option>
+          <option value="whisper-base">whisper-base</option>
+          <option value="whisper-tiny">whisper-tiny</option>
+          <option value="tenzin-small">tenzin-small（非商用）</option>
+          <option value="openpecha-general">openpecha-general（混合域）</option>
+        </select>
+      </label>
+      <label>分块 s
+        <input type="number" id="asr-chunk" value="0" min="0" step="1" title="0 = auto（whisper 9s，CTC 30s）">
+      </label>
+      <button id="asr-run" class="primary">开始转写</button>
+    </div>
+    <div id="asr-status" class="status mono muted"></div>
+
+    <div class="metrics" id="asr-metrics"></div>
+
+    <div class="diffhead">
+      <span class="legend">
+        <i class="lg lg-ok"></i>正确
+        <i class="lg lg-rep"></i>替换
+        <i class="lg lg-del"></i>漏识别
+        <i class="lg lg-ins"></i>多识别
+      </span>
+    </div>
+    <div class="diff" id="asr-diff"></div>
+    <div class="counts mono" id="asr-counts"></div>
+    <h2 class="mt">词级对比（BoTok 分词）</h2>
+    <div class="diff diff-words" id="asr-worddiff"></div>
+  </section>
+</main>
+
+<!-- ============================ BATCH ============================ -->
+<main id="tab-batch" class="tabpane">
+  <section class="col wide">
+    <h2>批量抽检</h2>
+    <p class="muted">按条件随机抽样，串行跑完并汇总。用于快速判断当前模型在这批材料上的整体水平。</p>
+    <div class="row wrap">
+      <label>任务
+        <select id="batch-task"><option value="ocr">OCR</option><option value="asr">ASR</option></select>
+      </label>
+      <label>条数 N <input type="number" id="batch-n" value="5" min="1" max="50"></label>
+      <label>随机种子 <input type="number" id="batch-seed" value="42"></label>
+      <label id="batch-ocr-engine-wrap">引擎
+        <select id="batch-engine"><option value="yigdzin">Yigdzin</option><option value="tesseract">Tesseract</option></select>
+      </label>
+      <label id="batch-asr-model-wrap" hidden>模型
+        <select id="batch-model">
+          <option value="whisper-small">whisper-small</option>
+          <option value="wav2vec2-base">wav2vec2-base</option>
+          <option value="openpecha-general">openpecha-general</option>
+          <option value="tenzin-small">tenzin-small</option>
+        </select>
+      </label>
+      <label id="batch-tech-wrap">材料
+        <select id="batch-tech">
+          <option value="">全部</option><option>manuscripts</option><option>blockprints</option>
+          <option>digital_fonts</option><option>modern</option><option>metal_types</option><option>typewriters</option>
+        </select>
+      </label>
+      <label id="batch-dept-wrap" hidden>领域
+        <select id="batch-dept">
+          <option value="">全部</option><option value="STT_AB">有声书</option><option value="STT_CS">儿童</option>
+          <option value="STT_HS">历史</option><option value="STT_MV">电影</option><option value="STT_NS">自然口语</option>
+          <option value="STT_NW">新闻</option><option value="STT_PC">播客</option><option value="STT_TT">开示</option>
+        </select>
+      </label>
+      <button id="batch-run" class="primary">开始抽检</button>
+    </div>
+    <div id="batch-status" class="status mono muted"></div>
+    <div class="metrics" id="batch-summary"></div>
+    <table class="segtrable" id="batch-table">
+      <thead><tr><th>id</th><th>分类</th><th>CER</th><th>SWER</th><th>耗时 s</th><th>预测（截断）</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</main>
+
+<!-- ============================ ABOUT ============================ -->
+<main id="tab-about" class="tabpane">
+  <section class="col wide prose">
+    <h2>指标定义</h2>
+    <table class="kv">
+      <tr><th>CER</th><td>Levenshtein(归一化预测, 归一化参考) / 参考长度，单条封顶 1.0。归一化用 botok，与 BDRC 官方脚本一致。</td></tr>
+      <tr><th>字符正确率</th><td>1 − CER，仅用于直观展示。</td></tr>
+      <tr><th>SWER</th><td>BoTok 分词后按词计算 WER；藏文一个词约 4.6 字符，所以 SWER 通常是 CER 的 3–4 倍。</td></tr>
+      <tr><th>RTF</th><td>推理耗时 / 音频时长；&lt;1 表示快于实时。</td></tr>
+      <tr><th>颜色</th><td>红=替换，灰+删除线=漏识别，琥珀虚线=多识别，墨色=正确。</td></tr>
+    </table>
+    <h2>模型</h2>
+    <table class="kv">
+      <tr><th>OCR</th><td>BDRC/tibetan-ocr（Yigdzin 1，0.8B，Apache-2.0，60 页 mean CER 2.50%）；Tesseract 5 + tessdata_best/bod（基线，CER 53.52%）。</td></tr>
+      <tr><th>ASR</th><td>billingsmoore NICT-Tib1 系列（wav2vec2-base CER 7.25% / whisper-small SWER 18.43%）；tenzin（非商用）；openpecha-general（混合域，许可未声明）。</td></tr>
+    </table>
+    <h2>数据</h2>
+    <table class="kv">
+      <tr><th>OCR 基准</th><td>BDRC Tibetan OCR Benchmark，472 页人工转写，CC0。筛选口径与原评测一致。</td></tr>
+      <tr><th>ASR 样例</th><td>NICT-Tib1 test（1,547 条，CC-BY-4.0）；OpenPecha 语音基准（8 领域抽样 160 条，MIT）。</td></tr>
+    </table>
+    <h2>限制</h2>
+    <ul class="muted">
+      <li>只覆盖卫藏（拉萨）口音；安多/康巴、古典唱诵未验证。</li>
+      <li>OCR 单页约 10–35 秒；推理全局串行（MPS 共享，并发会更慢）。</li>
+      <li>Whisper 类模型单次最多约 145 字符，长音频需分块（本页默认自动）。</li>
+    </ul>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

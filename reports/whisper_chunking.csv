@@ -1,0 +1,8 @@
+model,chunk_seconds,n,cer,swer,median_cer
+whisper-small,,20,0.4565,0.5192,0.4563
+whisper-small,7.5,20,0.0774,0.194,0.044
+whisper-small,9.0,20,0.0965,0.1992,0.0855
+whisper-small,10.5,20,0.1949,0.295,0.1927
+whisper-small,12.0,20,0.3038,0.3982,0.3172
+whisper-small,16.0,20,0.4521,0.5168,0.4558
+whisper-small,9.0,55,0.1496,0.2533,0.1027

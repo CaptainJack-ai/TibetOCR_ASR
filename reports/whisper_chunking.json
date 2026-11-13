@@ -1,0 +1,45 @@
+{
+  "min_ref_chars": 150,
+  "rows": [
+    {
+      "model": "whisper-small",
+      "chunk_seconds": 9.0,
+      "n": 55,
+      "cer": 0.1496,
+      "swer": 0.2533,
+      "median_cer": 0.1027
+    }
+  ],
+  "whisper-small|n20|chunk-": {
+    "model": "whisper-small",
+    "chunk_seconds": null,
+    "n": 20,
+    "cer": 0.4565,
+    "swer": 0.5192,
+    "median_cer": 0.4563
+  },
+  "whisper-small|n20|chunk9.0": {
+    "model": "whisper-small",
+    "chunk_seconds": 9.0,
+    "n": 20,
+    "cer": 0.0965,
+    "swer": 0.1992,
+    "median_cer": 0.0855
+  },
+  "whisper-small|n20|chunk12.0": {
+    "model": "whisper-small",
+    "chunk_seconds": 12.0,
+    "n": 20,
+    "cer": 0.3038,
+    "swer": 0.3982,
+    "median_cer": 0.3172
+  },
+  "whisper-small|n20|chunk16.0": {
+    "model": "whisper-small",
+    "chunk_seconds": 16.0,
+    "n": 20,
+    "cer": 0.4521,
+    "swer": 0.5168,
+    "median_cer": 0.4558
+  }
+}

@@ -1,0 +1,4 @@
+model,hf_id,dataset,n,cer,swer,n_short,cer_short,swer_short,rtf,peak_memory_mb,run_id
+wav2vec2-base,billingsmoore/tibetan-asr-nict-tib1-wav2vec2-base,openpecha,160,0.5402,0.9312,160,0.5402,0.9312,0.027,388.7,wav2vec2-base_openpecha_20261112_221718
+openpecha-general,openpecha/general_stt_base_model,openpecha,160,0.1546,0.3827,160,0.1546,0.3827,0.06,1806.4,openpecha-general_openpecha_20261112_221753
+whisper-small,billingsmoore/tibetan-asr-nict-tib1-whisper-small,openpecha,160,0.5621,0.896,160,0.5621,0.896,0.482,1340.1,whisper-small_openpecha_20261112_225427

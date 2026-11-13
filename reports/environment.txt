@@ -1,0 +1,24 @@
+# 运行环境快照
+
+Thu Nov 12 23:06:35 CST 2026
+
+ProductName:		macOS
+ProductVersion:		27.2
+BuildVersion:		26B123
+
+arm64
+
+      Chip: Apple M4
+      Memory: 16 GB
+
+python 3.12.2
+torch 2.15.0
+transformers 5.22.2
+datasets 5.2.0
+botok 1.1.7
+rapidfuzz 3.14.6
+librosa 1.0.0
+jiwer ?
+pandas 3.1.1
+mps available: True
+tesseract 5.5.2

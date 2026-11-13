@@ -1,0 +1,11 @@
+run_id,model,kind,dataset,n,errors,cer,cer_median,swer,n_sub,cer_sub,swer_sub,n_short,cer_short,swer_short,rtf,peak_memory_mb,beams,device,cer:news,cer:STT_AB,cer:STT_CS,cer:STT_HS,cer:STT_MV,cer:STT_NS,cer:STT_NW,cer:STT_PC,cer:STT_TT
+openpecha-general_nict_20261112_212842,openpecha/general_stt_base_model,ctc,nict,1547,0,0.0828,0.0759,0.3019,300,0.0778,0.2909,1273,0.0826,0.3022,0.049,1747.7,1,mps,0.0828,,,,,,,,
+openpecha-general_openpecha_20261112_221753,openpecha/general_stt_base_model,ctc,openpecha,160,0,0.1546,0.118,0.3827,160,0.1546,0.3827,160,0.1546,0.3827,0.06,1806.4,1,mps,,0.0684,0.3365,0.2028,0.189,0.0829,0.1122,0.1142,0.1309
+tenzin-small_nict_20261112_223457,tenzin/whisper-small-tibetan,whisper,nict,300,0,0.0832,0.0356,0.1785,300,0.0832,0.1785,245,0.0454,0.136,0.472,1343.6,1,mps,0.0832,,,,,,,,
+tenzin-small_openpecha_20261112_225857,tenzin/whisper-small-tibetan,whisper,openpecha,160,0,0.2486,0.1863,0.4685,160,0.2486,0.4685,160,0.2486,0.4685,0.432,1343.6,1,mps,,0.1397,0.5358,0.2695,0.3484,0.1386,0.2062,0.1475,0.2035
+wav2vec2-base_nict_20261112_212254,billingsmoore/tibetan-asr-nict-tib1-wav2vec2-base,ctc,nict,1547,0,0.079,0.0706,0.2981,300,0.0725,0.2856,1273,0.08,0.2989,0.023,1303.1,1,mps,0.079,,,,,,,,
+wav2vec2-base_openpecha_20261112_221718,billingsmoore/tibetan-asr-nict-tib1-wav2vec2-base,ctc,openpecha,160,0,0.5402,0.5512,0.9312,160,0.5402,0.9312,160,0.5402,0.9312,0.027,388.7,1,mps,,0.3746,0.6798,0.5486,0.6267,0.5395,0.471,0.4897,0.5915
+whisper-base_nict_20261112_215613,billingsmoore/tibetan-asr-nict-tib1-whisper-base,whisper,nict,300,0,0.1022,0.0722,0.2378,300,0.1022,0.2378,245,0.0668,0.2064,0.392,1180.8,1,mps,0.1022,,,,,,,,
+whisper-small_nict_20261112_221057,billingsmoore/tibetan-asr-nict-tib1-whisper-small,whisper,nict,300,0,0.0831,0.0468,0.1843,300,0.0831,0.1843,245,0.0482,0.1519,0.653,1348.5,1,mps,0.0831,,,,,,,,
+whisper-small_openpecha_20261112_225427,billingsmoore/tibetan-asr-nict-tib1-whisper-small,whisper,openpecha,160,0,0.5621,0.5228,0.896,160,0.5621,0.896,160,0.5621,0.896,0.482,1340.1,1,mps,,0.3763,0.756,0.5166,0.6046,0.5551,0.4335,0.5091,0.7457
+whisper-tiny_nict_20261112_214708,billingsmoore/tibetan-asr-nict-tib1-whisper-tiny,whisper,nict,300,0,0.1157,0.0872,0.2784,300,0.1157,0.2784,245,0.0807,0.2462,0.251,1147.3,1,mps,0.1157,,,,,,,,

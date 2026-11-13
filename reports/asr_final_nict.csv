@@ -1,0 +1,7 @@
+model,hf_id,dataset,n,cer,swer,n_short,cer_short,swer_short,rtf,peak_memory_mb,run_id
+wav2vec2-base,billingsmoore/tibetan-asr-nict-tib1-wav2vec2-base,nict,300,0.0725,0.2856,245,0.0735,0.2874,0.023,1303.1,wav2vec2-base_nict_20261112_212254
+openpecha-general,openpecha/general_stt_base_model,nict,300,0.0778,0.2909,245,0.078,0.2921,0.049,1747.7,openpecha-general_nict_20261112_212842
+whisper-tiny,billingsmoore/tibetan-asr-nict-tib1-whisper-tiny,nict,300,0.1157,0.2784,245,0.0807,0.2462,0.251,1147.3,whisper-tiny_nict_20261112_214708
+whisper-base,billingsmoore/tibetan-asr-nict-tib1-whisper-base,nict,300,0.1022,0.2378,245,0.0668,0.2064,0.392,1180.8,whisper-base_nict_20261112_215613
+whisper-small,billingsmoore/tibetan-asr-nict-tib1-whisper-small,nict,300,0.0831,0.1843,245,0.0482,0.1519,0.653,1348.5,whisper-small_nict_20261112_221057
+tenzin-small,tenzin/whisper-small-tibetan,nict,300,0.0832,0.1785,245,0.0454,0.136,0.472,1343.6,tenzin-small_nict_20261112_223457

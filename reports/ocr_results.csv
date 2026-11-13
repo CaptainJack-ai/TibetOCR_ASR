@@ -1,0 +1,5 @@
+run_id,pages,coverage,mean_cer,median_cer,catastrophic_pct,mean_seconds_per_page,technology:blockprints,technology:digital_fonts,technology:manuscripts,technology:metal_types,technology:modern,technology:typewriters,script:Transitional,script:Uchen,script:Uchen+Uchen,script:Uchen+Ume,script:Ume,script:Ume+Uchen,script:Ume+Ume
+tesseract_pilot_20261112_204458,3,3,0.8185,0.783,100.0,0.53,0.7717,0.9007,0.783,,,,,0.7773,,,0.9007,,
+tesseract_sample_20261112_210924,60,60,0.5352,0.5606,53.33,3.3,0.5916,0.4717,0.7511,0.2145,0.2702,0.3208,0.3961,0.3851,0.5751,0.7563,0.8409,0.8812,0.9306
+yigdzin_pilot_20261112_210826,3,3,0.0441,0.015,0.0,13.68,0.015,0.0,0.1173,,,,,0.0662,,,0.0,,
+yigdzin_sample_20261112_210922,60,60,0.025,0.0101,0.0,36.4,0.0123,0.0061,0.0361,0.0033,0.0134,0.1277,0.0082,0.0269,0.0138,0.0733,0.0184,0.0453,0.0444
