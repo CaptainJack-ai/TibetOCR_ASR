@@ -46,7 +46,7 @@
 - [实测结果](docs/results.md)：完整指标、分技术/分领域结果、失败案例分析、复现命令
 - [指标名词表](docs/metrics-glossary.md)：CER / SWER / RTF / 灾难页 / pp / token 等术语的含义、算法与误读陷阱
 - **[项目总结](docs/PROJECT-SUMMARY.md)**：一页看完结论、关键发现、交付物与边界
-- **[PPT 制作指导](docs/PPT-GUIDE.md)**：22 页大纲 + 逐页文案 + 配色字体规范 + 配图清单（供生成/修改汇报 PPT）
+- **[PPT 制作指导](docs/PPT-GUIDE.md)**：12 页高密度大纲 + 逐页文案与分区图 + 配色字体规范 + 图表规格（供生成/修改汇报 PPT）
 - **[本地评测 GUI](docs/gui.md)**：`./scripts/gui.sh` → 浏览器里选样例/上传图片或音频、逐字着色 diff、CER/SWER、批量抽检
 - **[真实场景手册](docs/scenarios.md)：扫描书/视频转写/万页归档/混合材料/接 API 的完整流程、耗时估算、质量闸门、踩坑清单**
 - [模型说明（单模型）](docs/models/README.md)：Yigdzin / wav2vec2-base / whisper-small 等每个模型一篇（架构、参数、精度、坑）
