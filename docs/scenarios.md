@@ -370,6 +370,7 @@ def status(job: str):
 | 长音频内存暴涨 | CTC 模型一次吃整个音频 | `pipeline.py` 对 CTC 默认 30s 分块 |
 | 中文/英文文件名导致路径怪 | 文件名被清洗成 `_` | 已用 `re.sub` 清洗并保留 `source` 原路径 |
 | 同一批数据两次结果不同 | 温度/设备/dtype 变了 | 固定 `--device mps --dtype fp16`（ASR）/`bf16`（OCR），记录在 report |
+| `git push` 报 `Connection reset by peer`，但浏览器能开 GitHub | git 不读 macOS 系统代理（浏览器读），直连被重置 | 运行 `./scripts/fix_git_proxy.sh`（自动读取系统代理并写入 `~/.gitconfig`）|
 
 ---
 
