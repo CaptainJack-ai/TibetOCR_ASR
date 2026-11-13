@@ -28,7 +28,7 @@ document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () 
 
 /* ---------------- health ---------------- */
 jget('/api/health').then((h) => {
-  $('#health').textContent = `${h.device.toUpperCase()} · torch ${h.torch}`;
+  $('#health').textContent = h.torch ? `${h.device.toUpperCase()} · torch ${h.torch}` : '评测结果服务在线';
 }).catch((e) => { $('#health').textContent = '离线'; });
 
 /* ---------------- job polling ---------------- */

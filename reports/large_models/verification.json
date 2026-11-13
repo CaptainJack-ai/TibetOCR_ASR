@@ -1,0 +1,284 @@
+{
+  "status": "verified",
+  "verified_utc": "2026-11-13T12:42:54.599109+00:00",
+  "active_models": [
+    "codex_ocr",
+    "deepseek_ocr",
+    "qwen_asr",
+    "qwen_audio_asr",
+    "qwen_stream_asr",
+    "doubao_seed_asr"
+  ],
+  "runs": [
+    {
+      "id": "codex_ocr_ocr",
+      "model": "gpt-6.1-sol",
+      "dataset": "ocr",
+      "expected": 60,
+      "outcomes": {
+        "ok": 60
+      },
+      "missing": 0,
+      "complete": true,
+      "selection_sha256": "af3712fd34213e80914ad0d43477a8ba82c31764643b5d03c3918a34aaac9a1b",
+      "metrics": {
+        "mean_cer": 0.35761381996673847,
+        "median_cer": 0.3340941966646912,
+        "catastrophic_pct": 36.666666666666664,
+        "mean_seconds": 76.32385489333338,
+        "cer": null,
+        "swer": null,
+        "rtf": null,
+        "short_le150": null,
+        "client_peak_rss_gb": 0.046608384
+      },
+      "baseline_comparisons": 2
+    },
+    {
+      "id": "deepseek_ocr_ocr",
+      "model": "deepseek-flash",
+      "dataset": "ocr",
+      "expected": 60,
+      "outcomes": {
+        "ok": 55,
+        "truncated": 5
+      },
+      "missing": 0,
+      "complete": true,
+      "selection_sha256": "af3712fd34213e80914ad0d43477a8ba82c31764643b5d03c3918a34aaac9a1b",
+      "metrics": {
+        "mean_cer": 0.6319629971737756,
+        "median_cer": 0.725042369101775,
+        "catastrophic_pct": 65.0,
+        "mean_seconds": 11.367273545000474,
+        "cer": null,
+        "swer": null,
+        "rtf": null,
+        "short_le150": null,
+        "client_peak_rss_gb": 0.255246336
+      },
+      "baseline_comparisons": 2
+    },
+    {
+      "id": "qwen_asr_nict",
+      "model": "qwen3.8-omni-flash",
+      "dataset": "nict",
+      "expected": 300,
+      "outcomes": {
+        "ok": 300
+      },
+      "missing": 0,
+      "complete": true,
+      "selection_sha256": "0ed99a22c1aa7792f89555404720f2f93529a46c1a05cf2cc3bc1c3e36b92a2a",
+      "metrics": {
+        "mean_cer": null,
+        "median_cer": null,
+        "catastrophic_pct": null,
+        "mean_seconds": 3.9569333706664476,
+        "cer": 0.15736809751520786,
+        "swer": 0.3134887629648508,
+        "rtf": 0.5588520583388733,
+        "short_le150": {
+          "n": 245,
+          "cer": 0.1547476059055283,
+          "swer": 0.3103344058628007,
+          "cer_micro": 0.15914537552297006,
+          "swer_micro": 0.3169818754925138,
+          "cer_macro": 0.1547476059055283,
+          "swer_macro": 0.3103344058628007,
+          "char_edits": 3918,
+          "ref_chars": 24619,
+          "unit_edits": 1609,
+          "ref_units": 5076
+        },
+        "client_peak_rss_gb": 0.274284544
+      },
+      "baseline_comparisons": 6
+    },
+    {
+      "id": "qwen_asr_openpecha",
+      "model": "qwen3.8-omni-flash",
+      "dataset": "openpecha",
+      "expected": 160,
+      "outcomes": {
+        "ok": 160
+      },
+      "missing": 0,
+      "complete": true,
+      "selection_sha256": "8347ebbf17b93a918bf74d0d99b94a4595b4fab3c2524797c608330165c54c82",
+      "metrics": {
+        "mean_cer": null,
+        "median_cer": null,
+        "catastrophic_pct": null,
+        "mean_seconds": 2.0677803912500394,
+        "cer": 0.43132149260197755,
+        "swer": 0.7318741027687913,
+        "rtf": 0.6165565524477337,
+        "short_le150": {
+          "n": 160,
+          "cer": 0.43132149260197755,
+          "swer": 0.7318741027687913,
+          "cer_micro": 0.42353995901639346,
+          "swer_micro": 0.730605738575983,
+          "cer_macro": 0.43132149260197755,
+          "swer_macro": 0.7318741027687913,
+          "char_edits": 3307,
+          "ref_chars": 7808,
+          "unit_edits": 1375,
+          "ref_units": 1882
+        },
+        "client_peak_rss_gb": 0.268775424
+      },
+      "baseline_comparisons": 4
+    },
+    {
+      "id": "qwen_audio_asr_nict",
+      "model": "qwen-audio-turbo",
+      "dataset": "nict",
+      "expected": 300,
+      "outcomes": {
+        "ok": 298,
+        "refused": 2
+      },
+      "missing": 0,
+      "complete": true,
+      "selection_sha256": "0ed99a22c1aa7792f89555404720f2f93529a46c1a05cf2cc3bc1c3e36b92a2a",
+      "metrics": {
+        "mean_cer": null,
+        "median_cer": null,
+        "catastrophic_pct": null,
+        "mean_seconds": 30.074837928666604,
+        "cer": 0.9651237650954537,
+        "swer": 0.9970970607038011,
+        "rtf": 4.247578492283927,
+        "short_le150": {
+          "n": 245,
+          "cer": 0.9572944062393312,
+          "swer": 0.996445380453634,
+          "cer_micro": 6.272188147365855,
+          "swer_micro": 7.165090622537431,
+          "cer_macro": 0.9572944062393312,
+          "swer_macro": 0.996445380453634,
+          "char_edits": 154415,
+          "ref_chars": 24619,
+          "unit_edits": 36370,
+          "ref_units": 5076
+        },
+        "client_peak_rss_gb": 0.245932032
+      },
+      "baseline_comparisons": 6
+    },
+    {
+      "id": "qwen_stream_asr_openpecha",
+      "model": "qwen-audio-3.1-asr-flash-streaming",
+      "dataset": "openpecha",
+      "expected": 160,
+      "outcomes": {
+        "ok": 160
+      },
+      "missing": 0,
+      "complete": true,
+      "selection_sha256": "8347ebbf17b93a918bf74d0d99b94a4595b4fab3c2524797c608330165c54c82",
+      "metrics": {
+        "mean_cer": null,
+        "median_cer": null,
+        "catastrophic_pct": null,
+        "mean_seconds": 5.296221038125395,
+        "cer": 0.9594358582694007,
+        "swer": 0.9905206390079648,
+        "rtf": 1.57919080676343,
+        "short_le150": {
+          "n": 160,
+          "cer": 0.9594358582694007,
+          "swer": 0.9905206390079648,
+          "cer_micro": 0.9499231557377049,
+          "swer_micro": 0.987778958554729,
+          "cer_macro": 0.9594358582694007,
+          "swer_macro": 0.9905206390079648,
+          "char_edits": 7417,
+          "ref_chars": 7808,
+          "unit_edits": 1859,
+          "ref_units": 1882
+        },
+        "client_peak_rss_gb": 0.247967744
+      },
+      "baseline_comparisons": 4
+    },
+    {
+      "id": "doubao_seed_asr_nict",
+      "model": "doubao-seed-2-1-lite-260915",
+      "dataset": "nict",
+      "expected": 300,
+      "outcomes": {
+        "ok": 298,
+        "truncated": 2
+      },
+      "missing": 0,
+      "complete": true,
+      "selection_sha256": "0ed99a22c1aa7792f89555404720f2f93529a46c1a05cf2cc3bc1c3e36b92a2a",
+      "metrics": {
+        "mean_cer": null,
+        "median_cer": null,
+        "catastrophic_pct": null,
+        "mean_seconds": 4.674189163000338,
+        "cer": 0.5922162112429581,
+        "swer": 0.9324346756989066,
+        "rtf": 0.6601526965737199,
+        "short_le150": {
+          "n": 245,
+          "cer": 0.586108342238213,
+          "swer": 0.9326279962848084,
+          "cer_micro": 0.770746171656038,
+          "swer_micro": 1.1526792750197006,
+          "cer_macro": 0.586108342238213,
+          "swer_macro": 0.9326279962848084,
+          "char_edits": 18975,
+          "ref_chars": 24619,
+          "unit_edits": 5851,
+          "ref_units": 5076
+        },
+        "client_peak_rss_gb": 0.244928512
+      },
+      "baseline_comparisons": 6
+    },
+    {
+      "id": "doubao_seed_asr_openpecha",
+      "model": "doubao-seed-2-1-lite-260915",
+      "dataset": "openpecha",
+      "expected": 160,
+      "outcomes": {
+        "ok": 160
+      },
+      "missing": 0,
+      "complete": true,
+      "selection_sha256": "8347ebbf17b93a918bf74d0d99b94a4595b4fab3c2524797c608330165c54c82",
+      "metrics": {
+        "mean_cer": null,
+        "median_cer": null,
+        "catastrophic_pct": null,
+        "mean_seconds": 2.4032970481249323,
+        "cer": 0.6065421517663708,
+        "swer": 0.9187918756671175,
+        "rtf": 0.7165986043633709,
+        "short_le150": {
+          "n": 160,
+          "cer": 0.6065421517663708,
+          "swer": 0.9187918756671175,
+          "cer_micro": 0.6164190573770492,
+          "swer_micro": 0.9537725823591924,
+          "cer_macro": 0.6065421517663708,
+          "swer_macro": 0.9187918756671175,
+          "char_edits": 4813,
+          "ref_chars": 7808,
+          "unit_edits": 1795,
+          "ref_units": 1882
+        },
+        "client_peak_rss_gb": 0.224448512
+      },
+      "baseline_comparisons": 4
+    }
+  ],
+  "official_ocr_scorer_sha256": "3e532ad13c1f7301ef96d4227e798925f34abda2327cb61316c830a159c44db5",
+  "complete_runs": 8,
+  "partial_runs": 0
+}

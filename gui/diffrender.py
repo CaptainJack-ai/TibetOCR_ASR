@@ -116,13 +116,13 @@ def side_by_side(ops: list[tuple[str, str, str]]) -> tuple[str, str]:
     return "".join(left), "".join(right)
 
 
-def analyse(ref_raw: str, hyp_raw: str, kind: str = "ocr") -> dict:
+def analyse(ref_raw: str, hyp_raw: str, kind: str = "ocr", normalize_reference: bool = True) -> dict:
     """Full result bundle for one sample.
 
     kind='ocr'  -> character diff + CER
     kind='asr'  -> character diff + CER + BoTok word diff + SWER
     """
-    ref_prepared = prepare_text(normalize_text(ref_raw or ""))
+    ref_prepared = prepare_text(normalize_text(ref_raw or "") if normalize_reference else ref_raw or "")
     ops, stats = align(ref_prepared, prepare_text(normalize_text(hyp_raw or "")))
     left, right = side_by_side(ops)
     result = {

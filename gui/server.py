@@ -12,6 +12,7 @@ Design notes
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import mimetypes
 import os
@@ -33,6 +34,7 @@ sys.path.insert(0, str(ROOT / "gui"))
 
 from common import ASR_DIR, OCR_DIR  # noqa: E402
 from diffrender import analyse  # noqa: E402
+import results_store  # noqa: E402
 
 STATIC = Path(__file__).parent / "static"
 MAX_UPLOAD = 40 * 1024 * 1024
@@ -57,9 +59,11 @@ _device: str | None = None
 def device() -> str:
     global _device
     if _device is None:
-        import torch
-
-        _device = "mps" if torch.backends.mps.is_available() else "cpu"
+        try:
+            import torch
+            _device = "mps" if torch.backends.mps.is_available() else "cpu"
+        except ImportError:
+            _device = "results"
     return _device
 
 
@@ -78,20 +82,24 @@ def _clean(obj):
 
 
 def load_ocr_samples() -> list[dict]:
-    import pandas as pd
+    return read_csv(OCR_DIR / "metadata.csv")
 
-    meta = pd.read_csv(OCR_DIR / "metadata.csv", dtype={"id": str})
-    return _clean(meta.to_dict("records"))
+
+def read_csv(path: Path) -> list[dict]:
+    with path.open(encoding="utf-8-sig", newline="") as file:
+        rows = list(csv.DictReader(file))
+    for row in rows:
+        for field in ("duration", "n_chars"):
+            if row.get(field):
+                row[field] = float(row[field])
+    return rows
 
 
 def load_asr_samples() -> dict[str, list[dict]]:
-    import pandas as pd
-
     out = {}
     for key, sub in (("nict", "nict_test"), ("openpecha", "openpecha_bench")):
         p = ASR_DIR / sub / "metadata.csv"
-        df = pd.read_csv(p, dtype={"id": str, "speaker": str})
-        out[key] = _clean(df.to_dict("records"))
+        out[key] = read_csv(p)
     return out
 
 
@@ -101,10 +109,7 @@ OCR_BY_ID = {r["id"]: r for r in OCR_SAMPLES}
 
 
 def ocr_ref(page_id: str) -> str:
-    import pandas as pd
-
-    df = pd.read_csv(OCR_DIR / "ground_truth.csv", dtype={"id": str}).set_index("id")
-    return str(df.transcription.get(page_id, "") or "")
+    return next((r["transcription"] for r in read_csv(OCR_DIR / "ground_truth.csv") if r["id"] == page_id), "")
 
 
 def asr_ref(dataset: str, item_id: str) -> str:
@@ -277,11 +282,25 @@ class Handler(BaseHTTPRequestHandler):
             if p.startswith("/static/"):
                 return self._static(p[len("/static/"):])
             if p == "/api/health":
-                import torch
-
+                try:
+                    import torch
+                    version = torch.__version__
+                except ImportError:
+                    version = None
                 return self._json({"status": "ok", "device": device(),
-                                   "torch": torch.__version__,
+                                   "torch": version,
                                    "loaded": sorted(_engines.keys())})
+            if p == "/api/results":
+                return self._json(results_store.catalog())
+            if p.startswith("/api/results/"):
+                parts = p.strip("/").split("/")
+                run_id = parts[2]
+                if len(parts) == 4 and parts[3] == "export.csv":
+                    return self._send(200, results_store.csv_path(run_id).read_bytes(), "text/csv; charset=utf-8",
+                                      {"Content-Disposition": f'attachment; filename="{run_id}.csv"'})
+                if len(parts) == 4:
+                    return self._json(results_store.sample(run_id, parts[3]))
+                return self._json(results_store.run(run_id))
             if p == "/api/samples/ocr":
                 rows = OCR_SAMPLES
                 for field in ("technology", "script", "legibility"):
@@ -301,10 +320,13 @@ class Handler(BaseHTTPRequestHandler):
                                    "image_url": f"/api/image/{pid}"})
             if p.startswith("/api/image/"):
                 pid = p.rsplit("/", 1)[-1]
+                if pid not in OCR_BY_ID:
+                    return self._err(404, "image not found")
                 img = OCR_DIR / "images" / f"{pid}.png"
                 if not img.exists():
                     return self._err(404, "image not found")
-                return self._send(200, img.read_bytes(), "image/png")
+                raw = img.read_bytes()
+                return self._send(200, raw, "image/jpeg" if raw.startswith(b"\xff\xd8") else "image/png")
             if p == "/api/samples/asr":
                 ds = (q.get("dataset") or ["nict"])[0]
                 rows = ASR_SAMPLES.get(ds, [])
@@ -343,6 +365,8 @@ class Handler(BaseHTTPRequestHandler):
                     j["elapsed"] = round(time.time() - j["started"], 1)
                 return self._json(j)
             return self._err(404, "not found")
+        except (KeyError, StopIteration, FileNotFoundError):
+            return self._err(404, "result or sample not found")
         except Exception:  # noqa: BLE001
             traceback.print_exc()
             return self._err(500, traceback.format_exc(limit=2))

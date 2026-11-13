@@ -19,14 +19,38 @@
 </header>
 
 <nav class="tabs">
-  <button class="tab active" data-tab="ocr">OCR 评测</button>
+  <button class="tab active" data-tab="results">正式评测结果</button>
+  <button class="tab" data-tab="ocr">OCR 评测</button>
   <button class="tab" data-tab="asr">ASR 评测</button>
   <button class="tab" data-tab="batch">批量抽检</button>
   <button class="tab" data-tab="about">说明 / 指标</button>
 </nav>
 
 <!-- ============================ OCR ============================ -->
-<main id="tab-ocr" class="tabpane active">
+<main id="tab-results" class="tabpane active">
+  <section class="report-panel">
+    <div class="report-toolbar">
+      <label>评测数据集<select id="report-dataset"><option value="ocr">OCR · 固定 60 页</option><option value="nict">ASR · NICT 300 条</option><option value="openpecha">ASR · OpenPecha 160 条</option></select></label>
+      <button id="report-refresh">刷新结果</button><span id="report-updated" class="muted"></span>
+    </div>
+    <p id="report-note" class="muted"></p>
+    <div class="report-scroll"><table id="report-table" class="report-table"></table></div>
+    <div id="report-chart" class="report-chart"></div>
+    <p id="report-timing" class="muted"></p>
+    <section id="report-details" hidden>
+      <div class="report-toolbar"><h2 id="report-title"></h2><a id="report-download">下载逐条指标 CSV</a></div>
+      <p id="report-model-note" class="muted"></p>
+      <details id="report-groups" hidden><summary>分组指标</summary><table id="report-group-table" class="report-table"></table></details>
+      <div class="report-inspection">
+        <div class="report-items"><table id="report-items" class="report-table"></table></div>
+        <div id="report-sample"><p class="muted">选择样本查看原始数据、识别文本和逐字差异。</p></div>
+      </div>
+    </section>
+    <div id="report-error" class="status"></div>
+  </section>
+</main>
+
+<main id="tab-ocr" class="tabpane">
   <section class="col source">
     <h2>数据源</h2>
     <div class="segmented">
@@ -268,5 +292,6 @@
 </main>
 
 <script src="/static/app.js"></script>
+<script src="/static/results.js"></script>
 </body>
 </html>
