@@ -11,6 +11,8 @@
 .report-table .baseline { color: var(--muted); }
 .selectable { cursor: pointer; }
 .selectable:hover, .report-table .selected { background: #e8f2f6; }
+.local-tag { margin-left: 6px; padding: 0 4px; font-size: 10px; color: var(--accent);
+             border: 1px solid var(--accent); border-radius: 1px; vertical-align: 1px; }
 .report-chart { margin: 24px 0; max-width: 1000px; }
 .report-bar { display: grid; grid-template-columns: 275px 1fr 75px; gap: 14px; align-items: center; margin: 10px 0; font-size: 12px; }
 .report-track { height: 14px; background: var(--bg-2); }

@@ -60,6 +60,8 @@
 
 Windows 本轮大模型正式评测可运行项目根目录的 `start_gui.ps1`，在浏览器打开 `http://127.0.0.1:8765`。默认“正式评测结果”页按 OCR 60 页、NICT 300 条、OpenPecha 160 条展示进度、完整指标和原报告基线。选择模型行可查看逐条结果、原图或音频、参考文本及识别差异，并下载 CSV。
 
+“正式评测结果”页现在同时包含**云端大模型**与**本机小模型**两源：模型名带「本地」标记的行来自 `outputs/{ocr,asr}/<run_id>/`（共 12 个 run，yigdzin、tesseract、wav2vec2-base、openpecha-general、whisper-tiny/base/small、tenzin-small），同样支持点击查看逐条预测、原图或音频、四色逐字差异并导出 CSV，详见 [docs/gui.md](docs/gui.md) 第 7 节。
+
 正式评测快照保存在 `reports/large_models/`。运行期间由相邻 `LargeModel_Test_Related/publish_results.py --watch` 每20秒同步，完成后可直接浏览落盘结果。页面中的接口错误、待推理、输出截断分别标记。API 服务端模型峰值内存由服务商遥测提供，当前留空，客户端峰值 RSS 单列。Windows 启动脚本使用相邻评测项目的 `.venv`，结果浏览依赖 BoTok 与 rapidfuzz。原有本地模型推理功能仍需安装原项目的模型依赖。
 
 2026-11-13 本轮8组正式评测已全部完成，模型和覆盖率见 [catalog.json](reports/large_models/catalog.json)。Kimi 已按用户要求退出本轮展示。OpenPecha 的 Qwen-Audio 采用用户指定的 `qwen-audio-3.1-asr-flash-streaming`，通过专属工作空间的 WebSocket 接口执行实时 ASR。指标、样本哈希和覆盖率核对记录见 [verification.json](reports/large_models/verification.json)。

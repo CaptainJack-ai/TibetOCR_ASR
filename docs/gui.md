@@ -105,7 +105,53 @@ cd /Users/zhouchenyu/Desktop/Code/TibetOCR_ASR
 
 ---
 
-## 7. 后端接口（便于脚本化）
+## 7. 正式评测结果页：云端 + 本地
+
+页面顶部切换到「正式评测结果」，下拉选数据集（`ocr` / `nict` / `openpecha`）即可看到该数据集下所有可比的 run。
+
+数据来自两个源，合并后在一张表里展示：
+
+| 来源 | 位置 | 说明 |
+|---|---|---|
+| 云端大模型 | `reports/large_models/` | 协作者产出的快照，只读；可复核指标，不含调用脚本 |
+| **本机小模型** | `outputs/ocr/<run_id>/`、`outputs/asr/<run_id>/` | 本项目 `scripts/run_ocr.py` / `run_asr.py` 跑出来的实测结果 |
+
+模型名右侧标有「本地」的行即本机推理结果，来自 `outputs/` 下 12 个 run：
+
+| run_id | 任务 / 数据 | 逐条来源文件 |
+|---|---|---|
+| `yigdzin_sample_20261112_210922` | OCR · 60 页 | `details_scored.csv` |
+| `tesseract_sample_20261112_210924` | OCR · 60 页 | `details_scored.csv` |
+| `wav2vec2-base_nict_20261112_212254` | ASR · NICT 300 | `predictions_scored.csv` |
+| `openpecha-general_nict_20261112_212842` | ASR · NICT 300 | 同上 |
+| `whisper-tiny_nict_20261112_214708` | ASR · NICT 300 | 同上 |
+| `whisper-base_nict_20261112_215613` | ASR · NICT 300 | 同上 |
+| `whisper-small_nict_20261112_221057` | ASR · NICT 300 | 同上 |
+| `tenzin-small_nict_20261112_223457` | ASR · NICT 300 | 同上 |
+| `wav2vec2-base_openpecha_20261112_221718` | ASR · OpenPecha 160 | 同上 |
+| `openpecha-general_openpecha_20261112_221753` | ASR · OpenPecha 160 | 同上 |
+| `whisper-small_openpecha_20261112_225427` | ASR · OpenPecha 160 | 同上 |
+| `tenzin-small_openpecha_20261112_225857` | ASR · OpenPecha 160 | 同上 |
+
+操作路径：
+
+1. 点模型行 → 下方「逐条结果」表格列出该 run 全部样本（样本 id / 状态 / CER / SWER / 秒）。
+2. 点某一条 → 展示**原数据文件**（OCR 显示原图，ASR 显示可播放音频）、参考文本、识别文本，以及逐字四色差异。
+3. 「分组表现」表格给出该 run 在 `technology` / `script` / `dept` / `speaker` 上的分项 CER、SWER。
+4. 「导出 CSV」下载该 run 的逐条打分文件，列与 `outputs/<task>/<run_id>/*_scored.csv` 完全一致。
+
+实现要点（`gui/results_store.py`）：
+
+- 本地 run 的 id 写成 `local:<run_id>`（`LOCAL_PREFIX`），与云端的 `codex_ocr_ocr` 这类 id 不会撞车。
+- 指标一律用该 run 的行重算，并先过滤到 `data/manifests/sample_ids.json` 的子集，保证与云端「同一批样本」可比。
+- 只收录 `n >= 20` 的 run，3 页的 pilot 运行不会混进表格。
+- OCR 的 `details_scored.csv` 用 `gt` 列做参考，读入后重命名为 `reference`；ASR 直接用 `reference`。
+- 原本作为「原报告」基线的 12 条聚合数字，已被本地 run 完整覆盖，合并时会自动去重（`baselines` 归零），避免同一模型出现两行。
+- 逐条 diff 在本地 run 上使用 `normalize_reference=False`，与 `scripts/score_ocr.py` / `score_asr.py` 的打分口径一致。
+
+---
+
+## 8. 后端接口（便于脚本化）
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
@@ -123,6 +169,10 @@ cd /Users/zhouchenyu/Desktop/Code/TibetOCR_ASR
 | POST | `/api/batch/ocr` `{n, seed, engine, technology}` | 批量 |
 | POST | `/api/batch/asr` `{n, seed, dataset, model, dept}` | 批量 |
 | GET | `/api/job/<id>` | `{status, elapsed, progress, result, error}` |
+| GET | `/api/results` | 正式评测目录（云端 run + 本地 run + 基线） |
+| GET | `/api/results/<run_id>` | 单个 run 的逐条列表与分组 |
+| GET | `/api/results/<run_id>/<sample_id>` | 单条样本：媒体 URL + 参考/识别 + 逐字 diff |
+| GET | `/api/results/<run_id>/export.csv` | 导出逐条打分 CSV |
 
 任务都是异步的：POST 返回 `{job}`，随后轮询 `/api/job/<id>`（页面 500ms 一次）。
 
@@ -137,7 +187,7 @@ curl -s http://127.0.0.1:8765/api/job/$J | python3 -m json.tool | head -20
 
 ---
 
-## 8. 设计取舍
+## 9. 设计取舍
 
 | 决定 | 原因 |
 |---|---|
@@ -149,7 +199,7 @@ curl -s http://127.0.0.1:8765/api/job/$J | python3 -m json.tool | head -20
 
 ---
 
-## 9. 常见问题
+## 10. 常见问题
 
 | 现象 | 处理 |
 |---|---|

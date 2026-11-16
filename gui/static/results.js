@@ -24,7 +24,9 @@ function renderReport() {
   for (const row of [...runs, ...baselines]) {
     const tr = el('tr', row.baseline ? 'baseline' : 'selectable');
     const metrics = row.baseline ? row : row.metrics;
-    reportCell(tr, row.model);
+    const modelCell = el('td', null, row.model);
+    if (row.local) modelCell.append(el('span', 'local-tag', '本地'));
+    tr.append(modelCell);
     reportCell(tr, row.baseline ? `原报告 · ${row.n} 条` : `${stateNames[row.state] || row.state} · ${row.attempted - row.errors}/${row.n}${row.empty ? ' · 空识别 ' + row.empty : ''}${row.refused ? ' · 拒识 ' + row.refused : ''}${row.truncated ? ' · 截断 ' + row.truncated : ''}`);
     reportCell(tr, row.baseline ? '—' : row.errors);
     reportCell(tr, fmtPct(metrics.cer));
@@ -61,7 +63,8 @@ function renderReport() {
     line.append(track, el('span', 'mono', fmtPct(value)));
     chart.append(line);
   }
-  $('#report-note').textContent = data.metrics_note + ' 选择模型行可查看逐条结果。完整评测指标在全部样本返回后显示。';
+  $('#report-note').textContent = [data.metrics_note, data.note_local,
+    '选择模型行可查看逐条结果与原数据文件。'].filter(Boolean).join(' ');
   $('#report-timing').textContent = data.timing_note;
   $('#report-updated').textContent = '更新于 ' + new Date(data.updated_utc).toLocaleString();
 }
